@@ -5,9 +5,9 @@
    There is error handling below for if things are enabled/disabled that shouldn't be.
    Make sure if you add additional functionality, to add error handling for it being turned on at the wrong time
 */
-int driveState = EEPROM.read(0);
-int inverting = 0;
-//#define BASIC_DRIVETRAIN
+int driveState = EEPROM.read(0); //Reads value from the first value form the EEPROM
+int inverting = 0;              //Sets inverting to 0
+//#define BASIC_DRIVETRAIN      
 #define OMNIWHEEL_DRIVETRAIN
 //#define CENTER_PERIPHERALS
 #define QB_PERIPHERALS
@@ -32,6 +32,7 @@ int inverting = 0;
       Left Joystick U/D - forward/back
       Right Joystick L/R - turning
       R2 - turbo
+      To switch to tank drive hold L1 and press Select
    Omniwheel Drivetrain:
       Left Joystick U/D/L/R - straffing any direction
       Right Joystick L/R - rotate
@@ -136,7 +137,7 @@ int xInput, yInput, throttleL, throttleR;
 #define PI_OVER_4             M_PI/4
 #define TURN_HANDICAP_AMOUNT  1
 #define MAX_TURN 14
-#ifdef QB_PERIPHERALS
+#ifdef QB_PERIPHERALS              //If this is the QB then R2 slows down otherwise R2 is boost.
 #define DEFAULT_HANDICAP      1
 #define ALTERNATE_HANDICAP    3
 #else
@@ -222,7 +223,7 @@ void setup() {
   leftMotor.writeMicroseconds(1500); //stopped
   rightMotor.attach(RIGHT_MOTOR, 1000, 2000);
   rightMotor.writeMicroseconds(1500);
-  if (driveState != 1 && driveState != 0) {
+  if (driveState != 1 && driveState != 0) {   //If the EPPROM does not contain any values it will set it to one and default to arcade drive
     EEPROM.write(0, 0);
     driveState = 0;
   }
@@ -351,7 +352,7 @@ void loop()
       digitalWrite(RED_LED, LOW);
       digitalWrite(GREEN_LED, LOW);
       digitalWrite(BLUE_LED, HIGH);
-      if (!hasIndicatedTackle)
+      if (!hasIndicatedTackle)                    //Detects if the controller had vibrated when tackled
       {
         PS3.setRumbleOn(10, 255, 10, 255);
         hasIndicatedTackle = true;
@@ -372,7 +373,7 @@ void loop()
 #endif
     if (state == DRIVING || state == KID)
     {
-      if (PS3.getButtonClick(SELECT))
+      if (PS3.getButtonClick(SELECT)) //Switch between tank drive and arcade mode. 0 is arcade 1 is tank
       { 
         if (PS3.getButtonPress(L1)) {
           if (driveState == 0) {
@@ -476,7 +477,7 @@ void loop()
 #endif
   }
 #ifdef BASIC_DRIVETRAIN
-  if (PS3.getButtonClick(R1)) {
+  if (PS3.getButtonClick(R1)) {       //This inverts the driving for tank drive.
     if (inverting == 0) {
       inverting = 1;
       PS3.setRumbleOn(10, 255, 10, 255);
