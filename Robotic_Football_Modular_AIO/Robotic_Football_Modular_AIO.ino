@@ -18,6 +18,8 @@
 //#include "Peripherals/QBPeripheral.cpp"
 //#include "Peripherals/KickerPeripheral.cpp"
 
+#include "BatteryMonitoring/batteryMonitoring.hpp"
+
 //==========Uncomment if not using bag motors==========
 //#define OldMotors
 
@@ -96,12 +98,14 @@ void loop() {
       if (kidsMode == true) {
         kidsMode = false;
         handicap = 3;
-        PS3.setLedRaw(1);               // ON OFF OFF ON
+        PS3.setLedOn(LED1);               // OFF * * ON
+        PS3.setLedOff(LED4);
         PS3.setRumbleOn(5, 255, 5, 255);// vibrate both, then left, then right
       } else if (kidsMode == false) {
         kidsMode = true;
         handicap = 7;
-        PS3.setLedRaw(9);               // OFF OFF OFF ON
+        PS3.setLedOn(LED1);               // ON * * ON
+        PS3.setLedOn(LED4);
         PS3.setRumbleOn(5, 255, 5, 255);// vibrate both, then left, then right
       }
     }
@@ -145,6 +149,9 @@ void loop() {
         green();
       }
     }
+#endif
+#if defined(BATTERY_MONITORING)
+  setLedsBasedOnBatteryLevel(PS3);
 #endif
     //===============================================================================================
 
